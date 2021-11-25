@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import Earth from "./components/Earth";
+import { OrbitControls } from "@react-three/drei";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Suspense fallback={null}>
           <Earth />
         </Suspense>
+        <OrbitControls />
       </Canvas>
     </>
   );

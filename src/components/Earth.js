@@ -1,15 +1,16 @@
 import React from "react";
+import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 
 const Earth = (props) => {
   const { nodes, materials } = useGLTF("./low_poly_earth.gltf");
   return (
-    <group dispose={null}>
+    <group dispose={null} {...props}>
       <mesh geometry={nodes.Sphere004.geometry}>
-        <meshBasicMaterial color="blue" />
+        <meshStandardMaterial color="blue" side={THREE.DoubleSide} />
       </mesh>
       <mesh geometry={nodes.Sphere004_1.geometry}>
-        <meshBasicMaterial color="green" />
+        <meshStandardMaterial color="green" />
       </mesh>
     </group>
   );
