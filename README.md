@@ -1,4 +1,4 @@
-# Maven Analytocs data set
+# Maven Analytics data set
 
 Take a dataset from the Mavern analytics website and visualise it.
 
