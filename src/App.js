@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
+import Earth from "./components/Earth";
 
 function App() {
   return (
@@ -7,10 +8,9 @@ function App() {
       <Canvas>
         <ambientLight intensity={0.1} />
         <directionalLight color="white" position={[5, 5, 5]} />
-        <mesh>
-          <boxBufferGeometry />
-          <meshStandardMaterial color="hotpink" />
-        </mesh>
+        <Suspense fallback={null}>
+          <Earth />
+        </Suspense>
       </Canvas>
     </>
   );
