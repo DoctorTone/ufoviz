@@ -3,9 +3,9 @@ import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 
 const Earth = (props) => {
-  const { nodes, materials } = useGLTF("./low_poly_earth.gltf");
+  const { nodes } = useGLTF("./low_poly_earth.gltf");
   return (
-    <group dispose={null} {...props}>
+    <group dispose={null} scale={5} {...props}>
       <mesh geometry={nodes.Sphere004.geometry}>
         <meshStandardMaterial color="blue" side={THREE.DoubleSide} />
       </mesh>
