@@ -2,22 +2,42 @@ import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { useStore } from "../state/store";
+import * as THREE from "three";
 
 const Pin = (props) => {
+  const { nodes, materials } = useGLTF("./pin.glb");
   const group = useRef();
-  const height = useStore((state) => state.earthLevel);
+  const animating = useRef(true);
+  const { startHeight, earthLevel, MOVEMENT_SPEED, pinPosition } = useStore();
 
-  const { nodes, materials } = useGLTF("./pin.gltf");
+  let long = new THREE.Quaternion();
+  long.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
+
+  let lat = new THREE.Quaternion();
+  lat.setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0);
+
+  let latlong = long.multiply(lat);
+
+  pinPosition.applyQuaternion(latlong);
+
+  const latLongDegrees = new THREE.Euler();
+  latLongDegrees.setFromQuaternion(latlong);
+
   useFrame((state) => {
-    group.current.position.y -= 0.01;
+    if (animating.current) {
+      group.current.position.y -= MOVEMENT_SPEED;
+      if (group.current.position.y <= earthLevel) {
+        animating.current = false;
+      }
+    }
   });
 
   return (
     <group
       ref={group}
       {...props}
-      position={[0, height, 0]}
-      scale={[0.01, 0.3, 0.01]}
+      position={[0, 0, 0]}
+      rotation={latLongDegrees}
       dispose={null}>
       <mesh geometry={nodes.Cylinder.geometry} material={materials.Silver} />
       <mesh geometry={nodes.Cylinder_1.geometry} material={materials.Red} />
