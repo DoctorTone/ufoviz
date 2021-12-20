@@ -6,5 +6,6 @@ export const useStore = create((set) => ({
   seaLevel: 3,
   startHeight: 7.5,
   MOVEMENT_SPEED: 0.01,
-  pinPosition: new THREE.Vector3(0, 0, 5),
+  pinLength: 5,
+  EARTH_SCALE: 3.15,
 }));
