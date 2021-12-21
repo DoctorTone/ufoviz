@@ -16,21 +16,15 @@ const Pins = ({ data }) => {
     useStore();
 
   const startPositions = [];
+  const pinScales = [];
   for (let i = 0; i < numPins; ++i) {
     startPositions.push(new THREE.Vector3());
+    pinScales.push(new THREE.Vector3());
   }
 
   let long = new THREE.Quaternion();
-
   let lat = new THREE.Quaternion();
-
   let pinPosition = new THREE.Vector3(0, 0, pinLength);
-
-  let pinScale = new THREE.Vector3().copy(pinPosition);
-  pinScale.multiplyScalar(0.1);
-
-  const latLongDegrees = new THREE.Euler();
-  latLongDegrees.setFromQuaternion(long);
 
   useEffect(() => {
     for (let i = 0; i < numPins; ++i) {
@@ -46,6 +40,8 @@ const Pins = ({ data }) => {
       startPositions[i].copy(pinPosition);
       startPositions[i].applyQuaternion(long);
       startPositions[i].multiplyScalar(14);
+      pinScales[i].copy(startPositions[i]);
+      pinScales[i].multiplyScalar(0.01);
       tempObject.position.copy(startPositions[i]);
       tempObject.updateMatrix();
       group.current.setMatrixAt(i, tempObject.matrix);
@@ -54,15 +50,9 @@ const Pins = ({ data }) => {
   }, []);
 
   useFrame((state) => {
-    // if (animating.current) {
-    //   group.current.position.sub(pinScale);
-    //   if (group.current.position.length() < 50) {
-    //     animating.current = false;
-    //   }
-    // }
     if (animating.current) {
       for (let i = 0; i < numPins; ++i) {
-        startPositions[i].sub(pinScale);
+        startPositions[i].sub(pinScales[i]);
         tempObject.position.copy(startPositions[i]);
         tempObject.updateMatrix();
         group.current.setMatrixAt(i, tempObject.matrix);
@@ -73,8 +63,6 @@ const Pins = ({ data }) => {
       group.current.instanceMatrix.needsUpdate = true;
     }
   });
-
-  console.log("Rendered");
 
   return (
     <instancedMesh ref={group} args={[null, null, numPins]}>
