@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useStore } from "../state/store";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
+import { SCENE } from "../config/Scene";
 
 const degreesToRads = (degrees) => (degrees * Math.PI) / 180;
 
@@ -20,14 +21,8 @@ const Pins = ({ data }) => {
 
   const startPositions = new Array(numPins).fill(undefined).map((elem, i) => {
     const pinPosition = new THREE.Vector3(0, 0, pinLength);
-    long.setFromAxisAngle(
-      new THREE.Vector3(0, 1, 0),
-      degreesToRads(data[i].longitude)
-    );
-    lat.setFromAxisAngle(
-      new THREE.Vector3(1, 0, 0),
-      degreesToRads(-data[i].latitude)
-    );
+    long.setFromAxisAngle(SCENE.Y_AXIS, degreesToRads(data[i].longitude));
+    lat.setFromAxisAngle(SCENE.X_AXIS, degreesToRads(-data[i].latitude));
     long.multiply(lat);
     pinPosition.applyQuaternion(long);
     pinPosition.multiplyScalar(14);
@@ -52,8 +47,6 @@ const Pins = ({ data }) => {
   }, []);
 
   useFrame((state) => {
-    console.log("Current = ", group.current);
-
     if (animating.current) {
       for (let i = 0; i < numPins; ++i) {
         startPositions[i].sub(pinScales[i]);
