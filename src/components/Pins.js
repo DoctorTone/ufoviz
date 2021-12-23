@@ -15,33 +15,35 @@ const Pins = ({ data }) => {
   const { startHeight, earthLevel, MOVEMENT_SPEED, pinLength, EARTH_SCALE } =
     useStore();
 
-  const startPositions = [];
-  const pinScales = [];
-  for (let i = 0; i < numPins; ++i) {
-    startPositions.push(new THREE.Vector3());
-    pinScales.push(new THREE.Vector3());
-  }
+  const long = new THREE.Quaternion();
+  const lat = new THREE.Quaternion();
 
-  let long = new THREE.Quaternion();
-  let lat = new THREE.Quaternion();
-  let pinPosition = new THREE.Vector3(0, 0, pinLength);
+  const startPositions = new Array(numPins).fill(undefined).map((elem, i) => {
+    const pinPosition = new THREE.Vector3(0, 0, pinLength);
+    long.setFromAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      degreesToRads(data[i].longitude)
+    );
+    lat.setFromAxisAngle(
+      new THREE.Vector3(1, 0, 0),
+      degreesToRads(-data[i].latitude)
+    );
+    long.multiply(lat);
+    pinPosition.applyQuaternion(long);
+    pinPosition.multiplyScalar(14);
+
+    return pinPosition;
+  });
+
+  const pinScales = new Array(numPins).fill(undefined).map((elem, i) => {
+    const pinScale = new THREE.Vector3().copy(startPositions[i]);
+    pinScale.multiplyScalar(0.01);
+
+    return pinScale;
+  });
 
   useEffect(() => {
     for (let i = 0; i < numPins; ++i) {
-      long.setFromAxisAngle(
-        new THREE.Vector3(0, 1, 0),
-        degreesToRads(data[i].longitude)
-      );
-      lat.setFromAxisAngle(
-        new THREE.Vector3(1, 0, 0),
-        degreesToRads(-data[i].latitude)
-      );
-      long.multiply(lat);
-      startPositions[i].copy(pinPosition);
-      startPositions[i].applyQuaternion(long);
-      startPositions[i].multiplyScalar(14);
-      pinScales[i].copy(startPositions[i]);
-      pinScales[i].multiplyScalar(0.01);
       tempObject.position.copy(startPositions[i]);
       tempObject.updateMatrix();
       group.current.setMatrixAt(i, tempObject.matrix);
@@ -50,6 +52,8 @@ const Pins = ({ data }) => {
   }, []);
 
   useFrame((state) => {
+    console.log("Current = ", group.current);
+
     if (animating.current) {
       for (let i = 0; i < numPins; ++i) {
         startPositions[i].sub(pinScales[i]);
