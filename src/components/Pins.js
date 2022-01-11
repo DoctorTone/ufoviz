@@ -12,7 +12,7 @@ const Pins = ({ data }) => {
   const group = useRef();
   const animating = useRef(true);
   const [tempObject] = useState(() => new THREE.Object3D());
-  const numPins = 10;
+  const numPins = data.length;
   const { startHeight, earthLevel, MOVEMENT_SPEED, pinLength, EARTH_SCALE } =
     useStore();
 
@@ -62,10 +62,9 @@ const Pins = ({ data }) => {
   });
 
   return (
-    <instancedMesh ref={group} args={[null, null, numPins]}>
-      <sphereBufferGeometry args={[0.5]} />
-      <meshBasicMaterial color={"red"} />
-    </instancedMesh>
+    <instancedMesh
+      ref={group}
+      args={[nodes.Pin.geometry, materials.Pin, numPins]}></instancedMesh>
   );
 };
 

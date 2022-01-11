@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import Earth from "./components/Earth";
+import Box from "./components/Box";
 import Pins from "./components/Pins";
 import { OrbitControls } from "@react-three/drei";
 import ufo_sightings_short from "./data/ufo_sightings_short.json";
