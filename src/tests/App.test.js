@@ -12,6 +12,9 @@ test("render earth correctly", async () => {
 
   expect(scene.children.length).toEqual(1);
   expect(scene.children[0].type).toEqual("Group");
+
+  expect(scene.children[0].children[0].type).toEqual("Mesh");
+  expect(scene.children[0].children[1].type).toEqual("Mesh");
 });
 
 test("render pins correctly", async () => {
