@@ -3,16 +3,26 @@ import { useFrame } from "@react-three/fiber";
 import { useStore } from "../state/store";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
+import { GLTF } from "three-stdlib";
 import { SCENE } from "../config/Scene";
 
-const degreesToRads = (degrees) => (degrees * Math.PI) / 180;
+const degreesToRads = (degrees: number) => (degrees * Math.PI) / 180;
 
-const Pins = ({ data }) => {
-  const { nodes, materials } = useGLTF("./pin.glb");
-  const group = useRef();
+type GLTFResult = GLTF & {
+  nodes: { Pin: THREE.Mesh };
+  materials: { Pin: THREE.Material };
+};
+
+type UFOData = {
+  data: { longitude: number; latitude: number }[];
+};
+
+const Pins = (props: UFOData) => {
+  const { nodes, materials } = useGLTF("./pin.glb") as GLTFResult;
+  const group = useRef<THREE.InstancedMesh>(null!);
   const animating = useRef(true);
   const [tempObject] = useState(() => new THREE.Object3D());
-  const numPins = data.length;
+  const numPins = props.data.length;
   const { startHeight, earthLevel, MOVEMENT_SPEED, pinLength, EARTH_SCALE } =
     useStore();
 
@@ -21,8 +31,8 @@ const Pins = ({ data }) => {
 
   const startPositions = new Array(numPins).fill(undefined).map((elem, i) => {
     const pinPosition = new THREE.Vector3(0, 0, pinLength);
-    long.setFromAxisAngle(SCENE.Y_AXIS, degreesToRads(data[i].longitude));
-    lat.setFromAxisAngle(SCENE.X_AXIS, degreesToRads(-data[i].latitude));
+    long.setFromAxisAngle(SCENE.Y_AXIS, degreesToRads(props.data[i].longitude));
+    lat.setFromAxisAngle(SCENE.X_AXIS, degreesToRads(-props.data[i].latitude));
     long.multiply(lat);
     pinPosition.applyQuaternion(long);
     pinPosition.multiplyScalar(14);

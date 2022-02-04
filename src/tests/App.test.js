@@ -5,6 +5,20 @@ import React, { Suspense } from "react";
 import { GLTFStructureLoader } from "@react-three/gltfjsx";
 import fs from "fs/promises";
 
+test("render cubes correctly", async () => {
+  const Box = () => {
+    return (
+      <mesh>
+        <boxGeometry args={[2, 2]} />
+        <meshBasicMaterial />
+      </mesh>
+    );
+  };
+  const renderer = await ReactThreeTestRenderer.create(<Box />);
+
+  expect(renderer.scene.children.length).toEqual(1);
+});
+
 test("render earth correctly", async () => {
   const loader = new GLTFStructureLoader();
   const earth = await fs.readFile("./public/low_poly_earth.gltf");
